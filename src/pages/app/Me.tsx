@@ -1,9 +1,15 @@
 import { Link } from "react-router-dom";
 import { AppLayout, PageHeader } from "@/prototype/AppLayout";
 import { usePrototypeAuth } from "@/prototype/auth";
+import { useStudyContext, contextDescription, getSample } from "@/prototype/context";
 
 export default function Me() {
   const { mode } = usePrototypeAuth();
+  const { ctx, link } = useStudyContext();
+  const ctxDesc = contextDescription(ctx);
+  const hasContext = !!(ctx.topic || ctx.selectedTopics.length || ctx.scope === "full-subject");
+  const sample = getSample(ctx);
+
   if (mode === "signed-out") {
     return (
       <AppLayout>
@@ -22,10 +28,10 @@ export default function Me() {
 
       <div className="grid sm:grid-cols-3 gap-3 max-w-3xl mb-6">
         {[
-          ["Attempted","12","this week"],
-          ["Checked","7","examiner-style"],
-          ["Mistakes logged","3","actionable"],
-        ].map(([k,v,s])=>(
+          ["Attempted", "12", "this week"],
+          ["Checked", "7", "examiner-style"],
+          ["Mistakes logged", "3", "actionable"],
+        ].map(([k, v, s]) => (
           <div key={k} className="lt-card p-4">
             <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{k}</div>
             <div className="font-display text-2xl">{v}</div>
@@ -37,16 +43,30 @@ export default function Me() {
       <div className="grid lg:grid-cols-2 gap-4 max-w-3xl">
         <div className="lt-card p-5">
           <div className="font-display text-lg mb-2">Your mistakes</div>
+          <div className="text-xs text-muted-foreground mb-2">
+            {hasContext
+              ? <>Filtered to current context: <span className="font-semibold text-foreground">{ctx.subject} · {ctxDesc || "Full subject"}</span></>
+              : <>Generic sample · no context selected</>}
+          </div>
           <ul className="text-sm space-y-2">
-            <li className="border border-border rounded-md p-3 bg-surface"><strong>Root verification omitted</strong><div className="text-xs text-muted-foreground">Quadratic Equations · 2 occurrences</div></li>
-            <li className="border border-border rounded-md p-3 bg-surface"><strong>Sign error in middle term</strong><div className="text-xs text-muted-foreground">Quadratic Equations · 1 occurrence</div></li>
+            <li className="border border-border rounded-md p-3 bg-surface">
+              <strong>{sample.mistakeFeedback.split(".")[0]}.</strong>
+              <div className="text-xs text-muted-foreground">{ctxDesc || ctx.subject} · 2 occurrences</div>
+            </li>
           </ul>
         </div>
         <div className="lt-card p-5">
           <div className="font-display text-lg mb-2">What to practise next</div>
+          <div className="text-xs text-muted-foreground mb-2">
+            {hasContext
+              ? <>Recommendation aligned to <span className="font-semibold text-foreground">{ctxDesc || ctx.subject}</span></>
+              : <>Generic recommendation · no context selected</>}
+          </div>
           <ul className="text-sm space-y-2">
-            <li className="border border-border rounded-md p-3 bg-surface flex justify-between items-center">3-mark factorisation with verification <Link to="/app/practice/run" className="text-accent text-xs font-semibold">Practise →</Link></li>
-            <li className="border border-border rounded-md p-3 bg-surface flex justify-between items-center">Discriminant nature-of-roots <Link to="/app/practice/run" className="text-accent text-xs font-semibold">Practise →</Link></li>
+            <li className="border border-border rounded-md p-3 bg-surface flex justify-between items-center">
+              {sample.practiseNext}
+              <Link to={link("/app/practice/run", { mode: "quick" })} className="text-accent text-xs font-semibold">Practise →</Link>
+            </li>
           </ul>
         </div>
       </div>

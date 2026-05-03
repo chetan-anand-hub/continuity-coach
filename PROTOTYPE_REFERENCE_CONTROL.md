@@ -51,3 +51,25 @@ Never instruct an agent to "compare vaguely to Level 3 Lovable". Always specify 
 
 ## Production implementation rule
 Do not compare a future production PR against this prototype unless `/app/reference-control` is included in the QA prompt.
+
+## Level 2 context rule (mandatory)
+
+Level 2 context must be interactive. Subject, scope, and topic cannot be static labels. Browser Agent must verify Maths vs Science switching, query-param handling, and downstream context carry-forward before passing this prototype.
+
+- Subjects: Maths, Science.
+- Streams: Maths → Standard; Science → Physics / Chemistry / Biology / All Science.
+- Scope: Single topic, Multi-topic, Full subject.
+- Maths sample topics: Trigonometry, Quadratic Equations, Arithmetic Progressions, Circles, Surface Areas and Volumes.
+- Science sample topics: Light — Reflection and Refraction, Electricity, Acids/Bases/Salts, Life Processes, Magnetic Effects of Electric Current.
+- Routes must read query params: `?subject`, `?stream`, `?scope`, `?topic`, `?topics`, `?source`.
+- Supported URL examples:
+  - `/app/practice?subject=Maths&scope=topic&topic=trigonometry`
+  - `/app/practice?subject=Science&scope=topic&topic=light-reflection-and-refraction`
+  - `/app/practice?subject=Maths&scope=multi-topic&topics=trigonometry,quadratic-equations`
+  - `/app/practice?subject=Science&scope=full-subject`
+  - `/app/worksheets?subject=Science&scope=topic&topic=electricity`
+  - `/app/check?source=worksheet&subject=Maths&topic=trigonometry`
+- All downstream links from Practice / Worksheets / WorksheetReady / WorksheetAttempt / Check / CheckResult / Me must preserve context in query params.
+- Quick Practice, Worksheet preview, sample HPQ, stored solution, stepwise marking, mistake feedback, and Me/Progress recommendations must change to match the active subject and topic.
+
+**Browser Agent decision rule:** HOLD if subject/scope/topic selection is missing, static, or not propagated downstream.
