@@ -74,6 +74,17 @@ export default function ReferenceControl() {
           </ul>
         </Section>
 
+        <Section title="Level 2 context rule (mandatory)">
+          <p><strong>Level 2 context must be interactive.</strong> Subject, scope, and topic cannot be static labels. Browser Agent must verify Maths vs Science switching, query-param handling, and downstream context carry-forward before passing this prototype.</p>
+          <ul className="list-disc list-inside space-y-1">
+            <li>Subjects: Maths, Science. Streams: Maths → Standard; Science → Physics / Chemistry / Biology / All Science.</li>
+            <li>Scope: Single topic, Multi-topic, Full subject.</li>
+            <li>Routes must read query params: <code>?subject</code>, <code>?stream</code>, <code>?scope</code>, <code>?topic</code>, <code>?topics</code>, <code>?source</code>.</li>
+            <li>All downstream links from Practice / Worksheets / Run / Attempt / Check / Result / Me must preserve context.</li>
+          </ul>
+          <p className="mt-2"><strong>Browser Agent decision rule:</strong> HOLD if subject/scope/topic selection is missing, static, or not propagated downstream.</p>
+        </Section>
+
         <Section title="Browser Agent audit rule">
           <p>Audit in this order, against named routes:</p>
           <ol className="list-decimal list-inside space-y-1">
